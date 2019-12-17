@@ -17,6 +17,11 @@ type ServerLog struct {
 	test string
 }
 
+type Building struct {
+	name string `json:"name"`
+	pwd string `json:"age"`
+}
+
 type Machine struct{
 	name string
 	value float64
@@ -40,6 +45,7 @@ func main() {
 	collection_building := database.C("building")
 	collection_machine := database.C("machine")
 	collection_server_log := database.C("server_log")
+	collection_statistic := database.C("statistic")
 	collection_server_log.Insert(bson.M{"time": time.Now(), "test": '0'})
 	fmt.Println(bson.M{"time": time.Now()})
 
@@ -74,7 +80,6 @@ func main() {
 			ctx.ReadJSON(&formData)
 			name := formData["name"]
 			pwd := formData["pwd"]
-			fmt.Println(formData["name"])
 			fmt.Println(name, pwd)
 			if pwd == "meiyoumima" {
 				collection_building.Upsert(bson.M{"name": name}, bson.M{"name": name})
@@ -116,7 +121,17 @@ func main() {
 				ctx.JSON(iris.Map{"Msg": "invalid building"})
 			}
 		})
-
+		v1.Get("test", func(ctx iris.Context) {
+			fmt.Println(ctx.GetHeader)
+		})
+		v1.Get("getUserNumber", func(ctx iris.Context) {
+			num, err := collection_statistic.Upsert(bson.M{"name": "accessNumber"}, bson.M{"$inc": bson.M{"accessNumber":1}})
+			fmt.Println(num, err)
+			query := collection_statistic.Find(bson.M{"name":"accessNumber"})
+			var result iris.Map
+			query.One(&result)
+			ctx.JSON(result)
+		})
 	}
-	app.Run(iris.Addr(":8082"))
+	app.Run(iris.Addr(":2334"))
 }
