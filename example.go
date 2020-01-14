@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/iris-contrib/middleware/cors"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type ServerLog struct {
